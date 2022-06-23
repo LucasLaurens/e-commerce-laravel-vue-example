@@ -10,11 +10,14 @@
 </template>
 
 <script setup>
+    import useProducts from '../composables/products/index.js';
     // import useCart from '../composables/cart/products.js';
     // const { addProduct, cartCount } = useCart();
     const props = defineProps({
         productId: Number
     });
+
+    const { add } = useProducts();
     // const emitter = require('tiny-emitter/instance');
     // const { inject } = require('vue');
     // const toast = inject('toast');
@@ -24,11 +27,13 @@
             .then(async (res) => {
                 console.log(res)
 
-                let response = await axios.post('/api/products', {
-                    productId: props.productId
-                });
+                // let response = await axios.post('/api/products', {
+                //     productId: props.productId
+                // });
 
-                console.log(response)
+                await add(props.productId);
+
+                // console.log(response)
 //             await addProduct(props.productId);
 //             toast.success('Produit ajouté au panier!');
 //             emitter.emit('refreshCartCount', cartCount);
