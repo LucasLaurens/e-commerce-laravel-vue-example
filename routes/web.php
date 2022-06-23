@@ -19,7 +19,7 @@ Route::get('/', function () {
 });
 
 Route::get('/products', [ProductController::class, 'index'])
-    ->middleware(['auth'])
+    // ->middleware(['auth'])
     ->name('products.index');
 
 Route::get('/dashboard', function () {

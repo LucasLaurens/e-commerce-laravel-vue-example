@@ -11,16 +11,15 @@
 
 <script setup>
     import useProducts from '../composables/products/index.js';
-    // import useCart from '../composables/cart/products.js';
-    // const { addProduct, cartCount } = useCart();
     const props = defineProps({
         productId: Number
     });
 
     const { add } = useProducts();
     const emitter = require('tiny-emitter/instance');
-    // const { inject } = require('vue');
-    // const toast = inject('toast');
+    const { inject } = require('vue');
+    const toast = inject('toast');
+
     const addToCart = async () => {
         await axios.get('/sanctum/csrf-cookie');
         await axios.get('/api/user')
@@ -28,13 +27,10 @@
                 let cartCount = await add(props.productId);
                 emitter.emit('cartCountUpdated', cartCount);
 
-                // console.log(response)
-//             await addProduct(props.productId);
-//             toast.success('Produit ajouté au panier!');
+                toast.success('Produit ajouté au panier!');
             })
-            .catch(err => {
-                // toast.error('Connectez-vous pour ajouter un produit au panier');
-                console.log(err)
+            .catch(() => {
+                toast.error('Connectez-vous pour ajouter un produit au panier');
                 return;
             });
     }
