@@ -19,6 +19,7 @@ Route::get('/', function () {
 });
 
 Route::get('/products', [ProductController::class, 'index'])
+    ->middleware(['auth'])
     ->name('products.index');
 
 Route::get('/dashboard', function () {

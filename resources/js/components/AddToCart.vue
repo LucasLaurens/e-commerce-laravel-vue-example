@@ -18,25 +18,19 @@
     });
 
     const { add } = useProducts();
-    // const emitter = require('tiny-emitter/instance');
+    const emitter = require('tiny-emitter/instance');
     // const { inject } = require('vue');
     // const toast = inject('toast');
     const addToCart = async () => {
         await axios.get('/sanctum/csrf-cookie');
         await axios.get('/api/user')
-            .then(async (res) => {
-                console.log(res)
-
-                // let response = await axios.post('/api/products', {
-                //     productId: props.productId
-                // });
-
-                await add(props.productId);
+            .then(async () => {
+                let cartCount = await add(props.productId);
+                emitter.emit('cartCountUpdated', cartCount);
 
                 // console.log(response)
 //             await addProduct(props.productId);
 //             toast.success('Produit ajouté au panier!');
-//             emitter.emit('refreshCartCount', cartCount);
             })
             .catch(err => {
                 // toast.error('Connectez-vous pour ajouter un produit au panier');

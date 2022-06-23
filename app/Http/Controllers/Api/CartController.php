@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
 use App\Models\Product;
-use App\Repositories\CartRepository;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use App\Http\Controllers\Controller;
+use App\Repositories\CartRepository;
 
 class CartController extends Controller
 {
@@ -68,5 +69,14 @@ class CartController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function count(): JsonResponse
+    {
+        $count = (new CartRepository())->count();
+
+        return response()->json([
+            'count' => $count
+        ]);
     }
 }
