@@ -17,7 +17,7 @@
             </tr>
             </thead>
             <tbody>
-                <template v-for="product in products" v-bind:key="product.id">
+                <template v-for="product, index in products" v-bind:key="product.id">
                     <tr>
                         <td class="hidden pb-4 md:table-cell">
                         <a href="#">
@@ -29,7 +29,7 @@
                             <p class="mb-2 md:ml-4" v-text="product.name"></p>
                             <form action="" method="POST">
                             <button type="submit" class="text-gray-700 md:ml-4">
-                                <!-- <small v-on:click.prevent="destroy(index)">(supprimer du panier)</small> -->
+                                <small v-on:click.prevent="destroy(index)">(supprimer du panier)</small>
                             </button>
                             </form>
                         </a>
@@ -37,13 +37,13 @@
                         <td class="justify-center md:justify-end md:flex mt-6">
                         <div class="w-20 h-10">
                             <div class="relative flex w-full h-8 space-x-5">
-                                <!-- <button v-on:click.prevent="decrease(index)">-</button> -->
-                            <input
-                                readonly
-                                type="input"
-                                :value="product.quantity"
-                                class="w-full font-semibold text-center text-gray-700 bg-gray-200 outline-none focus:outline-none hover:text-black focus:text-black" />
-                            <!-- <button v-on:click.prevent="increase(index)">+</button> -->
+                                <button v-on:click.prevent="decrease(index)">-</button>
+                                <input
+                                    readonly
+                                    type="input"
+                                    :value="product.quantity"
+                                    class="w-full font-semibold text-center text-gray-700 bg-gray-200 outline-none focus:outline-none hover:text-black focus:text-black" />
+                                <button v-on:click.prevent="increase(index)">+</button>
                             </div>
                         </div>
                         </td>
@@ -70,7 +70,7 @@
                         Total
                     </div>
                     <div class="lg:px-4 lg:py-2 m-2 lg:text-lg font-bold text-center text-gray-900">
-                        <!-- {{ cartTotal }} -->
+                        {{ cartTotal }}
                     </div>
                     </div>
                 <a href="/checkout">
@@ -95,32 +95,37 @@ import { priceFormat } from "../helpers/index.js";
 const {
     products,
     getProducts,
-    // deleteProduct,
-    // increaseQuantity,
-    // decreaseQuantity,
-    // cartCount
+    destroyProduct,
+    increaseQuantity,
+    decreaseQuantity,
+    cartCount
 } = useProducts();
 const { onMounted, computed } = require("vue");
-// const emitter = require('tiny-emitter/instance');
-// const destroy = async (index) => {
-//     await deleteProduct(index);
-//     await getProducts();
-//     emitter.emit('refreshCartCount', cartCount.value);
-// }
-// const increase = async (index) => {
-//     await increaseQuantity(index);
-//     await getProducts();
-//     emitter.emit('refreshCartCount', cartCount.value);
-// }
-// const decrease= async (index) => {
-//     await decreaseQuantity(index);
-//     await getProducts();
-//     emitter.emit('refreshCartCount', cartCount.value);
-// }
-// const cartTotal = computed(() => {
-//     const price = Object.values(products.value).reduce((acc, product) => acc += (product.quantity * product.price), 0);
-//     return priceFormat(price);
-// });
+const emitter = require('tiny-emitter/instance');
+
+const destroy = async (index) => {
+    await destroyProduct(index);
+    await getProducts();
+    emitter.emit('cartCountUpdated', cartCount.value);
+}
+
+const increase = async (index) => {
+    await increaseQuantity(index);
+    await getProducts();
+    emitter.emit('cartCountUpdated', cartCount.value);
+}
+
+const decrease = async (index) => {
+    await decreaseQuantity(index);
+    await getProducts();
+    emitter.emit('cartCountUpdated', cartCount.value);
+}
+
+const cartTotal = computed(() => {
+    const price = Object.values(products.value).reduce((acc, product) => acc += (product.quantity * product.price), 0);
+    return priceFormat(price);
+});
+
 onMounted( async () => {
     getProducts();
 });
