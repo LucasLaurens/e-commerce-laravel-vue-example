@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ShoppingCartController;
+use App\Http\Controllers\StripeCheckoutController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -23,8 +24,10 @@ Route::get('/shopping-cart', [ShoppingCartController::class, 'index'])
     ->name('cart.index');
 
 Route::get('/products', [ProductController::class, 'index'])
-    // ->middleware(['auth'])
     ->name('products.index');
+
+Route::get('/checkout', [StripeCheckoutController::class, 'create']);
+Route::post('/paymentIntent', [StripeCheckoutController::class, 'paymentIntent']);
 
 Route::get('/dashboard', function () {
     return view('dashboard');
