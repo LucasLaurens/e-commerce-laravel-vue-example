@@ -1,4 +1,5 @@
 import { ref } from "vue";
+import { saveOrder } from "../../helpers/index.js";
 
 export default function useStripe() {
     const elements = ref(null);
@@ -33,6 +34,7 @@ export default function useStripe() {
         switch (paymentIntent.status) {
             case "succeeded":
               showMessage("Payment succeeded!");
+              await saveOrder();
               break;
             case "processing":
               showMessage("Your payment is processing.");
@@ -49,11 +51,12 @@ export default function useStripe() {
     const handleSubmit = async() => {
         setLoading(true);
 
+        const redirectUrl = process.env.MIX_APP_URL + '/checkout';
         const { error } = await stripe.value.confirmPayment({
             elements: elements.value,
             confirmParams: {
                 // Make sure to change this to your payment completion page
-                return_url: process.env.MIX_APP_URL,
+                return_url: redirectUrl,
             },
         });
 

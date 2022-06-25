@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ShoppingCartController;
 use App\Http\Controllers\StripeCheckoutController;
@@ -26,11 +27,18 @@ Route::get('/shopping-cart', [ShoppingCartController::class, 'index'])
 Route::get('/products', [ProductController::class, 'index'])
     ->name('products.index');
 
+Route::post('/saveOrder', OrderController::class)
+    ->name('orders.save');
+
 Route::get('/checkout', [StripeCheckoutController::class, 'create']);
 Route::post('/paymentIntent', [StripeCheckoutController::class, 'paymentIntent']);
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    $orders = auth()->user()->orders;
+
+    return view('dashboard', [
+        'orders' => $orders
+    ]);
 })->middleware(['auth'])->name('dashboard');
 
 require __DIR__.'/auth.php';

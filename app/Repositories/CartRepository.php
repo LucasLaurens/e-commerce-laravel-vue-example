@@ -68,15 +68,22 @@ class CartRepository
         return \Cart::session(auth()->user()->id)->getTotal();
     }
 
-    public function jsonOrderItems()
+    public function clear(): void
     {
-        return $this->content()->map(function ($item) {
-            return [
-                'name' => $item->name,
-                'quantity' => $item->quantity,
-                'price' => $item->price
-            ];
-        })
-        ->toJson();
+        \Cart::session(auth()->user()->id)->clear();
+    }
+
+    public function jsonOrderItems(): string
+    {
+        return $this
+            ->content()
+            ->map(function ($item) {
+                return [
+                    'name' => $item->name,
+                    'quantity' => $item->quantity,
+                    'price' => $item->price
+                ];
+            })
+            ->toJson();
     }
 }
